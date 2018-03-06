@@ -47,7 +47,7 @@ def main():
     logger.addHandler(fh)
     logger.setLevel(logging.INFO)
 
-    # instantiate the neural trainer and add
+    # instantiate the neural trainer
     innt = InteractiveNeuralTrainer(logger=logger)
 
     # adds two interactions to triggers 'w' and 's', to increase/decrease the learning rate of an optimizer; increase is
@@ -80,14 +80,14 @@ def main():
     innt.add_interaction('e', quick_load(net), synchronized=True)
 
     # adds the 'reboot' function to reinit the network params; this is equivalent to restart from scratch whenever the
-    # optimizer or the net reache a unstable configuration (e.g., containing nan values)
+    # optimizer or the net reaches a unstable configuration (e.g., containing nan values)
     innt.add_interaction('r', reboot(net, optimizer, input_size=INPUT_SIZE, out_size=OUTPUT_SIZE), synchronized=True)
 
     # runs the daemon, which will listen to the action triggers and operate in the shadows
     innt.start()
 
     for i in range(10000):
-        innt.synchronize()
+        innt.synchronize() # call the synchronized events which are queued (the rest of actions are undertaken on the fly)
         optimizer.zero_grad()
         y_ = net.forward(X)
         loss = criterion(y_, y)
