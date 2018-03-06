@@ -100,7 +100,8 @@ def __adapt_value(oldval, factor, increment, lmin, lmax, epsilon=1e-4):
 
 def adapt_optim_param(optimizer, param, factor=1, increment=0, lmax=None, lmin=None):
     #assert param in optimizer.state_dict(), 'unknown parameter {} for the optimizer'.format(param)
-    assert factor!=1 and factor!=0, 'invalid factor, should be !=1 and !=0'
+    assert factor!=0, 'factor should be != 0'
+    assert not (factor == 1 and increment == 0), 'setting factor=1 and increment=0 will have no effect'
     def adapt_optimizer_param_():
         state_dict = optimizer.state_dict()
         for param_group in state_dict['param_groups']:
@@ -112,6 +113,7 @@ def adapt_optim_param(optimizer, param, factor=1, increment=0, lmax=None, lmin=N
 def adapt_net_attr(net, attr, factor=1, increment=0, lmin=None, lmax=None):
     assert isinstance(attr, str), 'attr should be a str'
     assert hasattr(net, attr), '{} does not have attribute {}'.format(net.__class__.__name__, attr)
+    assert factor != 0, 'factor should be != 0'
     assert not (factor == 1 and increment==0), 'setting factor=1 and increment=0 will have no effect'
     def adapt_net_attr_():
         setattr(net, attr, __adapt_value(getattr(net, attr), factor, increment, lmin, lmax))
