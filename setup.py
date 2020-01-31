@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='Interactive neural net trainer for Torch',
     version='1.0',
-    scripts=['inntt.py'],
+    py_modules=['inntt'],
     url='https://github.com/AlexMoreo/inntt',
     license='',
     author='Alejandro Moreo Fernandez',
