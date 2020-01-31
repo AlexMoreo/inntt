@@ -87,6 +87,7 @@ def inspect_param(optimizer, param):
     for param_group in optimizer.state_dict()['param_groups']:
         return param_group[param]
 
+
 def __adapt_value(oldval, factor, increment, lmin, lmax, epsilon=1e-4):
     if oldval == 0 and factor>1 and increment==0: # the value is dead
         return epsilon
@@ -97,6 +98,7 @@ def __adapt_value(oldval, factor, increment, lmin, lmax, epsilon=1e-4):
     if lmax is not None:
         newval = min(newval, lmax)
     return newval
+
 
 def adapt_optim_param(optimizer, param, factor=1, increment=0, lmax=None, lmin=None):
     #assert param in optimizer.state_dict(), 'unknown parameter {} for the optimizer'.format(param)
@@ -110,6 +112,7 @@ def adapt_optim_param(optimizer, param, factor=1, increment=0, lmax=None, lmin=N
         optimizer.load_state_dict(state_dict)
     return adapt_optimizer_param_
 
+
 def adapt_net_attr(net, attr, factor=1, increment=0, lmin=None, lmax=None):
     assert isinstance(attr, str), 'attr should be a str'
     assert hasattr(net, attr), '{} does not have attribute {}'.format(net.__class__.__name__, attr)
@@ -119,21 +122,26 @@ def adapt_net_attr(net, attr, factor=1, increment=0, lmin=None, lmax=None):
         setattr(net, attr, __adapt_value(getattr(net, attr), factor, increment, lmin, lmax))
     return adapt_net_attr_
 
+
 def increase_lr(optimizer, factor=1.1):
     assert factor>1, 'the factor should be >1'
     return adapt_optim_param(optimizer, 'lr', factor)
+
 
 def decrease_lr(optimizer, factor=0.9):
     assert factor<1, 'the factor should be <1'
     return adapt_optim_param(optimizer, 'lr', factor)
 
+
 def increase_weight_decay(optimizer, factor=1.1):
     assert factor>1, 'the factor should be >1'
     return adapt_optim_param(optimizer, 'weight_decay', factor)
 
+
 def decrease_weight_decay(optimizer, factor=0.9):
     assert factor<1, 'the factor should be <1'
     return adapt_optim_param(optimizer, 'weight_decay', factor)
+
 
 def quick_load(net, save_dir='checkpoint'):
     saved_path = os.path.join(save_dir, net.__class__.__name__ + '_quick_save')
@@ -141,6 +149,7 @@ def quick_load(net, save_dir='checkpoint'):
         print('\tloading ' + saved_path)
         net.load_state_dict(torch.load(saved_path).state_dict())
     return quick_load_
+
 
 def quick_save(net, save_dir='checkpoint'):
     if not os.path.exists(save_dir):
@@ -152,6 +161,7 @@ def quick_save(net, save_dir='checkpoint'):
             torch.save(net, modelfile)
     return quick_save_
 
+
 def validation(net, X, y, criterion):
     def validation_():
         net_state=net.training
@@ -161,6 +171,7 @@ def validation(net, X, y, criterion):
         print('\tValidation: %4f' % eval)
         net.train(net_state)
     return validation_
+
 
 def reboot(net, optimizer=None, **net_args):
     assert isinstance(net,nn.Module), 'cannot reboot on this instance, use a nn.Module'

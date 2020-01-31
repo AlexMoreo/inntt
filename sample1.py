@@ -94,8 +94,9 @@ def main():
         loss.backward()
         optimizer.step()
 
-        print('[step {}]: loss={:.8f}, lr={:.8f}, weight_decay={:.8f}, drop_prob={:.4f}'
-              .format(i, loss.data[0], inspect_param(optimizer, 'lr'), inspect_param(optimizer, 'weight_decay'), net.drop_prob))
+        print('[step {}]: loss={:.8f}, lr={:.8f}, weight_decay={:.8f}, drop_prob={:.4f}'.format(
+            i, loss.item(), inspect_param(optimizer, 'lr'), inspect_param(optimizer, 'weight_decay'), net.drop_prob)
+        )
         time.sleep(.2) # <- to simplify the visualization
 
 
